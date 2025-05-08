@@ -22,7 +22,7 @@ jobs:
       - name: Deploy Allure Report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GH_PAT }}
+          personal_token: ${{ secrets.GH_PAT }}
           publish_dir: allure-report
       
       - name: Notify via Slack
@@ -30,9 +30,9 @@ jobs:
         with:
           payload: |
             {
-              "text": "Allure Report is available at: https://<your-github-username>.github.io/<repository-name>/"
+              "text": "Allure Report is available at: https://github.com/axelforce/ggFinance/actions/runs/${{ github.run_id }}/artifacts",
             }
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhookUrl: ${{ secrets.SLACK_WEBHOOK_URL }}
       - name: Generate Allure Report
         run: npx allure generate allure-results --clean
       - name: Upload Allure Report
