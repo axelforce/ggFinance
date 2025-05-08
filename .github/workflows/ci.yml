@@ -24,17 +24,18 @@ jobs:
         with:
           personal_token: ${{ secrets.GH_PAT }}
           publish_dir: allure-report
-      
-      - name: Send message to Slack
-        uses: slackapi/slack-github-action@v2.0.0
+      - name: Slack Notification
+        uses: 8398a7/action-slack@v3
         with:
-          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: |
+          status: custom
+          fields: repo,message,commit,author
+          custom_payload: |
             {
+              "channel": "${{ secrets.SLACK_CHANNEL_ID }}",
               "text": "✅ Allure Report is ready: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
             }
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       - name: Generate Allure Report
         run: npx allure generate allure-results --clean
       - name: Upload Allure Report
