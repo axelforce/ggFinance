@@ -32,7 +32,7 @@ jobs:
           custom_payload: |
             {
               "channel": "${{ secrets.SLACK_CHANNEL_ID }}",
-              "text": "✅ Allure Report is ready: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+              "text": "✅ Allure Report is ready: https://axelforce.github.io/${{ github.repository }}/"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
