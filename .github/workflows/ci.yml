@@ -19,3 +19,24 @@ jobs:
         with:
           name: playwright-test-results
           path: playwright-report/
+      - name: Deploy Allure Report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-report
+      
+      - name: Notify via Slack
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          payload: |
+            {
+              "text": "Allure Report is available at: https://<your-github-username>.github.io/<repository-name>/"
+            }
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Generate Allure Report
+        run: npx allure generate allure-results --clean
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report/

@@ -7,7 +7,10 @@ const config: PlaywrightTestConfig = {
   fullyParallel: true,
   retries: 1,
   workers: 1,
-  reporter: [['html', { open: 'never' }]],
+  reporter: [
+    ['html', { open: 'never' }],
+    ['allure-playwright']
+  ],
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: 'https://gigglefinance.com',
