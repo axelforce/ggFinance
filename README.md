@@ -1,4 +1,4 @@
-# Giggle Finance Playwright Tests
+# Finance Playwright Tests
 
 ## 📦 Install dependencies
 ```bash
