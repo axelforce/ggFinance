@@ -26,13 +26,13 @@ jobs:
           publish_dir: allure-report
       
       - name: Notify via Slack
-        uses: slackapi/slack-github-action@v1.23.0
+        uses: slackapi/slack-github-action@v2.0.0
         with:
           payload: |
             {
               "text": "Allure Report is available at: https://github.com/axelforce/ggFinance/actions/runs/${{ github.run_id }}/artifacts",
             }
-          webhookUrl: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhookUrl: ${{ secrets.SLACK_WEBHOOK }}
       - name: Generate Allure Report
         run: npx allure generate allure-results --clean
       - name: Upload Allure Report
