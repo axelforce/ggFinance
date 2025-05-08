@@ -6,7 +6,7 @@ const config: PlaywrightTestConfig = {
   timeout: 30 * 1000,
   fullyParallel: true,
   retries: 1,
-  workers: 3,
+  workers: 1,
   reporter: [['html', { open: 'never' }]],
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
