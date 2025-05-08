@@ -12,12 +12,11 @@ const config: PlaywrightTestConfig = {
     ['allure-playwright']
   ],
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: 'https://gigglefinance.com',
     browserName: 'chromium',
     video: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    headless: true,
+    headless: false,
     viewport: { width: 1280, height: 720 },
   },
   expect: {
