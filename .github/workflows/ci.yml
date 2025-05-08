@@ -32,12 +32,12 @@ jobs:
           custom_payload: |
             {
               "channel": "${{ secrets.SLACK_CHANNEL_ID }}",
-              "text": "✅ Allure Report is ready: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
+              "text": "✅ Allure Report is ready: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       - name: Generate Allure Report
-        run: npx allure generate allure-results --clean
+        run: npx allure generate allure-results
       - name: Upload Allure Report
         uses: actions/upload-artifact@v4
         with:
