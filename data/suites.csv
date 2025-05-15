@@ -1,0 +1,4 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Thu May 08 12:07:54 UTC 2025","Thu May 08 12:08:04 UTC 2025","9724","","navigation.spec.ts","","","","Footer links are visible and functional",""
+"passed","Thu May 08 12:07:39 UTC 2025","Thu May 08 12:07:54 UTC 2025","15222","","navigation.spec.ts","","","","Navigation to Contact Us page",""
+"passed","Thu May 08 12:07:27 UTC 2025","Thu May 08 12:07:39 UTC 2025","11163","","home.spec.ts","","","","Homepage should load with main title",""
