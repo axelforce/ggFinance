@@ -37,8 +37,10 @@ jobs:
           path: playwright-report/
 
       - name: Generate Allure Report
-        run: npx allure generate allure-results --clean
-
+        run: |
+          npm install -D allure-commandline@2.20.1
+          npx allure generate --clean
+          
       - name: Upload Allure Report
         uses: actions/upload-artifact@v4
         with:
