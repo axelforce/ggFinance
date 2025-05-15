@@ -1,6 +1,11 @@
 name: Playwright Tests
 
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'
 
 jobs:
   test:
@@ -8,54 +13,91 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
+        test-env: [sandbox, staging, prod]
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
 
       - run: npm ci
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run tests (full on main, smoke tag on PR)
+      - name: Create .env file from GitHub Secrets
         run: |
-          if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
-            TEST_ENV=ci npx playwright test --reporter=html
+          if [ "${{ matrix.test-env }}" = "sandbox" ]; then
+            echo "BASE_URL=${{ secrets.SANDBOX_BASE_URL }}" >> .env
+            echo "API_TOKEN=${{ secrets.SANDBOX_API_TOKEN }}" >> .env
+            echo "DB_HOST=${{ secrets.SANDBOX_DB_HOST }}" >> .env
+            echo "DB_USER=${{ secrets.SANDBOX_DB_USER }}" >> .env
+            echo "DB_PASSWORD=${{ secrets.SANDBOX_DB_PASSWORD }}" >> .env
+            echo "DB_NAME=${{ secrets.SANDBOX_DB_NAME }}" >> .env
+          elif [ "${{ matrix.test-env }}" = "staging" ]; then
+            echo "BASE_URL=${{ secrets.STAGING_BASE_URL }}" >> .env
+            echo "API_TOKEN=${{ secrets.STAGING_API_TOKEN }}" >> .env
+            echo "DB_HOST=${{ secrets.STAGING_DB_HOST }}" >> .env
+            echo "DB_USER=${{ secrets.STAGING_DB_USER }}" >> .env
+            echo "DB_PASSWORD=${{ secrets.STAGING_DB_PASSWORD }}" >> .env
+            echo "DB_NAME=${{ secrets.STAGING_DB_NAME }}" >> .env
+          elif [ "${{ matrix.test-env }}" = "prod" ]; then
+            echo "BASE_URL=${{ secrets.PROD_BASE_URL }}" >> .env
+            echo "API_TOKEN=${{ secrets.PROD_API_TOKEN }}" >> .env
+            echo "DB_HOST=${{ secrets.PROD_DB_HOST }}" >> .env
+            echo "DB_USER=${{ secrets.PROD_DB_USER }}" >> .env
+            echo "DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }}" >> .env
+            echo "DB_NAME=${{ secrets.PROD_DB_NAME }}" >> .env
+          fi.${{ matrix.test-env }} .env
+
+      - name: Run tests by environment and event
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "schedule" && "${{ matrix.test-env }}" == "sandbox" ]]; then
+            TEST_ENV=${{ matrix.test-env }} npx playwright test --grep @full --reporter=html
+          elif [[ "$GITHUB_REF" == "refs/heads/main" && "${{ matrix.test-env }}" == "staging" ]]; then
+            TEST_ENV=${{ matrix.test-env }} npx playwright test --grep @critical --reporter=html
+          elif [[ "$GITHUB_REF" == "refs/heads/main" && "${{ matrix.test-env }}" == "prod" ]]; then
+            TEST_ENV=${{ matrix.test-env }} npx playwright test --grep @smoke --reporter=html
+          elif [[ "$GITHUB_EVENT_NAME" == "pull_request" && "${{ matrix.test-env }}" == "sandbox" ]]; then
+            TEST_ENV=${{ matrix.test-env }} npx playwright test --grep @smoke --reporter=html
           else
-            TEST_ENV=ci npx playwright test --grep @smoke --reporter=html
+            echo "No tests configured for this environment and trigger."
           fi
 
       - name: Upload Playwright HTML Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-test-results
+          name: playwright-test-results-${{ matrix.test-env }}
           path: playwright-report/
 
       - name: Generate Allure Report
+        if: always()
         run: |
           npm install -D allure-commandline@2.20.1
           npx allure generate --clean
-          
+
       - name: Upload Allure Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report
+          name: allure-report-${{ matrix.test-env }}
           path: allure-report/
 
-      - name: Deploy Allure Report to GitHub Pages
-        if: github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Slack Notification (failure only for schedule)
+        if: failure() && github.event_name == 'schedule'
+        uses: 8398a7/action-slack@v3
         with:
-          personal_token: ${{ secrets.GH_PAT }}
-          publish_dir: allure-report
+          status: failure
+          fields: repo,message,commit,author
+          custom_payload: |
+            {
+              "channel": "${{ secrets.SLACK_CHANNEL_ID }}",
+              "text": "❌ Nightly @full tests failed in ${{ matrix.test-env }}: https://axelforce.github.io/ggFinance/"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-      - name: Slack Notification
-        if: always()
+      - name: Slack Notification (always notify on other runs)
+        if: always() && github.event_name != 'schedule'
         uses: 8398a7/action-slack@v3
         with:
           status: custom
@@ -63,7 +105,7 @@ jobs:
           custom_payload: |
             {
               "channel": "${{ secrets.SLACK_CHANNEL_ID }}",
-              "text": "✅ Allure Report is ready: https://axelforce.github.io/ggFinance/"
+              "text": "✅ ${{ matrix.test-env }} run completed. Allure: https://axelforce.github.io/ggFinance/"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

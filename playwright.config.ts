@@ -1,8 +1,20 @@
-import { PlaywrightTestConfig } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
+import * as dotenv from 'dotenv';
 
-const config: PlaywrightTestConfig = {
+// Load env file only if TEST_ENV is defined
+if (process.env.TEST_ENV) {
+  const envFile = `.env.${process.env.TEST_ENV}`;
+  console.log(`✅ Loading env: ${envFile}`);
+  dotenv.config({ path: envFile });
+} else {
+  console.warn('⚠️ TEST_ENV not set. No environment file loaded.');
+}
+
+console.log(`🌍 BASE_URL: ${process.env.BASE_URL || 'default (not set)'}`);
+
+const config = defineConfig({
   testDir: './tests',
-  testMatch: /.*\.spec\.ts/,
+  testMatch: /.*\\.spec\\.ts/,
   timeout: 30 * 1000,
   fullyParallel: true,
   retries: 1,
@@ -12,7 +24,7 @@ const config: PlaywrightTestConfig = {
     ['allure-playwright']
   ],
   use: {
-    baseURL: 'https://gigglefinance.com',
+    baseURL: process.env.BASE_URL || 'https://gigglefinance.com',
     browserName: 'chromium',
     video: 'retain-on-failure',
     screenshot: 'only-on-failure',
@@ -25,8 +37,7 @@ const config: PlaywrightTestConfig = {
       maxDiffPixels: 30
     }
   },
-  /* Folder for test artifacts such as screenshots, videos, traces, etc. */
   outputDir: 'test-results/',
-};
+});
 
 export default config;

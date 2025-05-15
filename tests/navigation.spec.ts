@@ -5,7 +5,7 @@ test.beforeEach(async ({ page, financePage }) => {;
   await financePage.navigateToHomePage();
 });
 
-test('Navigation to Contact Us page', async ({ page, financePage }) => {
+test('@smoke Navigation to Contact Us page', async ({ page, financePage }) => {
   await financePage.clickContactUs();
 
   expect(await financePage.getHeaderText()).toBe('Contact us');
