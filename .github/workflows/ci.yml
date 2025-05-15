@@ -2,13 +2,29 @@ name: Playwright Tests
 
 on:
   push:
+    paths:
+      - 'tests/**'
+      - 'playwright.config.ts'
+      - '.github/workflows/**'
   pull_request:
   workflow_dispatch:
   schedule:
     - cron: '0 1 * * *'
 
 jobs:
+  test-sandbox-on-framework-change:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    name: Sandbox Test on Framework Change
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - name: Run @smoke tests for sandbox only
+        run: TEST_ENV=sandbox npx playwright test --grep @smoke --reporter=html
+
   test:
+    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -17,36 +33,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
       - run: npm ci
-
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-
-      - name: Create .env file from GitHub Secrets
-        run: |
-          if [ "${{ matrix.test-env }}" = "sandbox" ]; then
-            echo "BASE_URL=${{ secrets.SANDBOX_BASE_URL }}" >> .env
-            echo "API_TOKEN=${{ secrets.SANDBOX_API_TOKEN }}" >> .env
-            echo "DB_HOST=${{ secrets.SANDBOX_DB_HOST }}" >> .env
-            echo "DB_USER=${{ secrets.SANDBOX_DB_USER }}" >> .env
-            echo "DB_PASSWORD=${{ secrets.SANDBOX_DB_PASSWORD }}" >> .env
-            echo "DB_NAME=${{ secrets.SANDBOX_DB_NAME }}" >> .env
-          elif [ "${{ matrix.test-env }}" = "staging" ]; then
-            echo "BASE_URL=${{ secrets.STAGING_BASE_URL }}" >> .env
-            echo "API_TOKEN=${{ secrets.STAGING_API_TOKEN }}" >> .env
-            echo "DB_HOST=${{ secrets.STAGING_DB_HOST }}" >> .env
-            echo "DB_USER=${{ secrets.STAGING_DB_USER }}" >> .env
-            echo "DB_PASSWORD=${{ secrets.STAGING_DB_PASSWORD }}" >> .env
-            echo "DB_NAME=${{ secrets.STAGING_DB_NAME }}" >> .env
-          elif [ "${{ matrix.test-env }}" = "prod" ]; then
-            echo "BASE_URL=${{ secrets.PROD_BASE_URL }}" >> .env
-            echo "API_TOKEN=${{ secrets.PROD_API_TOKEN }}" >> .env
-            echo "DB_HOST=${{ secrets.PROD_DB_HOST }}" >> .env
-            echo "DB_USER=${{ secrets.PROD_DB_USER }}" >> .env
-            echo "DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }}" >> .env
-            echo "DB_NAME=${{ secrets.PROD_DB_NAME }}" >> .env
-          fi.${{ matrix.test-env }} .env
 
       - name: Run tests by environment and event
         run: |
