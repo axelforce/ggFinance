@@ -13,7 +13,7 @@ test('@smoke Navigation to Contact Us page', async ({ page, financePage }) => {
   await expect(financePage.contactForm).toBeVisible();
 });
 
-test('Footer links are visible and functional', async ({ page, financePage }) => {
+test('@smoke Footer links are visible and functional', async ({ page, financePage }) => {
   const footerLinks = await financePage.getFooterLinks();
 
   const footerTexts = await footerLinks.allTextContents();

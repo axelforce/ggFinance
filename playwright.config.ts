@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test';
 import * as dotenv from 'dotenv';
 
-// Load env file only if TEST_ENV is defined
+// Load .env only if TEST_ENV is defined
 if (process.env.TEST_ENV) {
   const envFile = `.env.${process.env.TEST_ENV}`;
   console.log(`✅ Loading env: ${envFile}`);
@@ -10,12 +10,25 @@ if (process.env.TEST_ENV) {
   console.warn('⚠️ TEST_ENV not set. No environment file loaded.');
 }
 
-console.log(`🌍 BASE_URL: ${process.env.BASE_URL || 'default (not set)'}`);
+// Optional: fallback baseURLs by ENV if you don't use .env at all
+const baseURLs: Record<string, string> = {
+  sandbox: 'https://sandbox.gigglefinance.com',
+  staging: 'https://staging.gigglefinance.com',
+  prod: 'https://app.gigglefinance.com',
+};
+
+const baseURL =
+  process.env.BASE_URL ||
+  baseURLs[process.env.TEST_ENV as keyof typeof baseURLs] ||
+  'https://gigglefinance.com';
+
+console.log(`🌍 Running ENV: ${process.env.TEST_ENV}`);
+console.log(`🔗 baseURL: ${baseURL}`);
 
 const config = defineConfig({
   testDir: './tests',
   testMatch: /.*\\.spec\\.ts/,
-  timeout: 30 * 1000,
+  timeout: 30_000,
   fullyParallel: true,
   retries: 1,
   workers: 1,
@@ -24,7 +37,7 @@ const config = defineConfig({
     ['allure-playwright']
   ],
   use: {
-    baseURL: process.env.BASE_URL || 'https://gigglefinance.com',
+    baseURL,
     browserName: 'chromium',
     video: 'retain-on-failure',
     screenshot: 'only-on-failure',
@@ -32,7 +45,7 @@ const config = defineConfig({
     viewport: { width: 1280, height: 720 },
   },
   expect: {
-    timeout: 35000,
+    timeout: 35_000,
     toMatchSnapshot: {
       maxDiffPixels: 30
     }

@@ -1,0 +1,24 @@
+name: 🚀 Playwright Tests on Dispatch (demo only)
+
+on:
+  repository_dispatch:
+    types: [run-playwright-tests]
+
+jobs:
+  test-dispatched:
+    runs-on: ubuntu-latest
+    env:
+      TEST_ENV: ${{ github.event.client_payload.env }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run demo test on ${{ env.TEST_ENV }}
+        run: |
+          echo "🔥 Triggered externally!"
+          echo "Running tests for ENV: $TEST_ENV"
+          npx playwright test --grep @smoke --reporter=html

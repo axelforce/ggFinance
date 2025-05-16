@@ -1,0 +1,17 @@
+name: 🔁 Trigger QA Tests (demo only)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  trigger-qa-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger CI in qa-tests-repo (demo)
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.QA_REPO_TOKEN }}
+          repository: your-org/qa-tests-repo
+          event-type: run-playwright-tests
+          client-payload: '{"env": "sandbox"}'

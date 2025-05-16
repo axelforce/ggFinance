@@ -33,26 +33,8 @@ jobs:
       #   run: |
       #     if [ "${{ matrix.test-env }}" = "sandbox" ]; then
       #       echo "BASE_URL=${{ secrets.SANDBOX_BASE_URL }}" >> .env
-      #       echo "API_TOKEN=${{ secrets.SANDBOX_API_TOKEN }}" >> .env
-      #       echo "DB_HOST=${{ secrets.SANDBOX_DB_HOST }}" >> .env
-      #       echo "DB_USER=${{ secrets.SANDBOX_DB_USER }}" >> .env
-      #       echo "DB_PASSWORD=${{ secrets.SANDBOX_DB_PASSWORD }}" >> .env
-      #       echo "DB_NAME=${{ secrets.SANDBOX_DB_NAME }}" >> .env
-      #     elif [ "${{ matrix.test-env }}" = "staging" ]; then
-      #       echo "BASE_URL=${{ secrets.STAGING_BASE_URL }}" >> .env
-      #       echo "API_TOKEN=${{ secrets.STAGING_API_TOKEN }}" >> .env
-      #       echo "DB_HOST=${{ secrets.STAGING_DB_HOST }}" >> .env
-      #       echo "DB_USER=${{ secrets.STAGING_DB_USER }}" >> .env
-      #       echo "DB_PASSWORD=${{ secrets.STAGING_DB_PASSWORD }}" >> .env
-      #       echo "DB_NAME=${{ secrets.STAGING_DB_NAME }}" >> .env
-      #     elif [ "${{ matrix.test-env }}" = "prod" ]; then
-      #       echo "BASE_URL=${{ secrets.PROD_BASE_URL }}" >> .env
-      #       echo "API_TOKEN=${{ secrets.PROD_API_TOKEN }}" >> .env
-      #       echo "DB_HOST=${{ secrets.PROD_DB_HOST }}" >> .env
-      #       echo "DB_USER=${{ secrets.PROD_DB_USER }}" >> .env
-      #       echo "DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }}" >> .env
-      #       echo "DB_NAME=${{ secrets.PROD_DB_NAME }}" >> .env
-      #     fi.${{ matrix.test-env }} .env
+      #       ...
+      #     fi
 
       # - name: Run tests by environment and event
       #   run: |
