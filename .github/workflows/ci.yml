@@ -37,7 +37,7 @@ jobs:
       #     fi
 
       # - name: Run tests by environment and event
-      #   run: |
+        # run: |
       #     if [[ "$GITHUB_EVENT_NAME" == "schedule" && "${{ matrix.test-env }}" == "sandbox" ]]; then
       #       TEST_ENV=${{ matrix.test-env }} npx playwright test --grep @full --reporter=html
       #     elif [[ "$GITHUB_REF" == "refs/heads/main" && "${{ matrix.test-env }}" == "staging" ]]; then

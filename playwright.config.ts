@@ -27,7 +27,7 @@ console.log(`🔗 baseURL: ${baseURL}`);
 
 const config = defineConfig({
   testDir: './tests',
-  testMatch: /.*\\.spec\\.ts/,
+  testMatch: /\.spec\.ts$/,
   timeout: 30_000,
   fullyParallel: true,
   retries: 1,
