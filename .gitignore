@@ -8,3 +8,6 @@ node_modules/
 /allure-report/
 /allure-results/
 /.allure/
+.env.prod
+.env.sandbox
+.env.staging
