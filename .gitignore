@@ -17,6 +17,7 @@ build/
 test-results/
 playwright-report/
 allure-report/
+allure-results/
 
 # Env files
 .env*
