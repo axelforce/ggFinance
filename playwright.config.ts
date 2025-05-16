@@ -12,9 +12,9 @@ if (process.env.TEST_ENV) {
 
 // Optional: fallback baseURLs by ENV if you don't use .env at all
 const baseURLs: Record<string, string> = {
-  sandbox: 'https://sandbox.gigglefinance.com',
-  staging: 'https://staging.gigglefinance.com',
-  prod: 'https://app.gigglefinance.com',
+  sandbox: 'https://gigglefinance.com',
+  staging: 'https://gigglefinance.com',
+  prod: 'https://gigglefinance.com',
 };
 
 const baseURL =
