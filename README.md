@@ -164,6 +164,3 @@ TEST_ENV=staging npx playwright test --list
 * No secrets are hardcoded
 * `.env` support is ready but not required
 
----
-
-Have questions or need to activate `.env`-based execution? Just ask! 💬
